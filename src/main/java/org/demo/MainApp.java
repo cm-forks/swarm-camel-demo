@@ -1,6 +1,7 @@
 package org.demo;
 
 import org.demo.rest.HelloResource;
+import org.demo.route.RestService;
 import org.demo.route.TimerToLog;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.wildfly.swarm.Swarm;
@@ -18,7 +19,8 @@ public class MainApp {
 
 		// Add fractions
 		swarm.fraction(new CamelCoreFraction()
-				.addRouteBuilder(new TimerToLog()));
+				.addRouteBuilder(new TimerToLog())
+		        .addRouteBuilder(new RestService()));
 
 		swarm.start();
 		swarm.deploy();
