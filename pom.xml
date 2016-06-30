@@ -71,11 +71,6 @@
       <groupId>org.wildfly.swarm</groupId>
       <artifactId>camel-undertow</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.wildfly</groupId>
-      <artifactId>wildfly-undertow</artifactId>
-      <version>10.0.0.Final</version>
-    </dependency>
 
     <!-- Logging -->
     <dependency>
