@@ -16,16 +16,29 @@
 package io.fabric8.quickstarts.swarm.route;
 
 import org.apache.camel.builder.RouteBuilder;
+import static org.apache.camel.model.rest.RestParamType.path;
 
 public class RestService extends RouteBuilder {
     @Override public void configure() throws Exception {
 
-        restConfiguration()
-          .component("undertow")
-          .host("localhost");
+        restConfiguration().component("undertow")
+          // and output using pretty print
+          .dataFormatProperty("prettyPrint", "true")
+          // WildFly & Swarm only allows to use localhost host
+          .host("localhost")
+          // add swagger api-doc out of the box
+          .apiContextPath("/swagger.json")
+          .apiProperty("api.title", "User Service")
+          .apiProperty("api.version", "1.0")
+          .apiProperty("api.description", "An example using REST DSL and Swagger Java with CDI")
+          // and enable CORS
+          .apiProperty("cors", "true");;
 
-        rest("/api")
-           .get("/say/{name}").to("direct:say");
+        rest("/api").description("Api rest service").consumes("application/json").produces("application/json")
+
+           .get("/say/{name}").description("Say Hello to the name")
+                .param().name("id").type(path).description("The namr of the user to say Hello").dataType("string").endParam()
+                .to("direct:say");
 
         from("direct:say")
            .transform()

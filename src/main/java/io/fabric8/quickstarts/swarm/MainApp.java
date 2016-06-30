@@ -16,9 +16,11 @@
 package io.fabric8.quickstarts.swarm;
 
 import io.fabric8.quickstarts.swarm.route.RestService;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.wildfly.swarm.Swarm;
 import org.wildfly.swarm.camel.core.CamelCoreFraction;
 import org.wildfly.swarm.jolokia.JolokiaFraction;
+import org.wildfly.swarm.undertow.WARArchive;
 
 public class MainApp {
 
@@ -33,6 +35,9 @@ public class MainApp {
 		swarm.fraction(new JolokiaFraction("/jmx"));
 
 		swarm.start();
-		swarm.deploy();
+
+		WARArchive deployment = ShrinkWrap.create(WARArchive.class);
+		deployment.staticContent();
+		swarm.deploy(deployment);
 	}
 }
