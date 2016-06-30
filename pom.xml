@@ -10,7 +10,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-<!--        <docker.from>docker.io/fabric8/java-jboss-openjdk8-jdk:1.0.13</docker.from>-->
+        <!-- This image doesn't work as jolokia logger is different from WildFly
+        <docker.from>docker.io/fabric8/java-jboss-openjdk8-jdk:1.0.13</docker.from>
+        -->
         <docker.from>docker.io/java:openjdk-8-jdk</docker.from>
         <docker.image>fabric8/${project.artifactId}:${project.version}</docker.image>
         <docker.port.container.http>8080</docker.port.container.http>
@@ -64,14 +66,6 @@
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>jolokia</artifactId>
         </dependency>
-        <!--        <dependency>
-                    <groupId>org.wildfly.swarm</groupId>
-                    <artifactId>logging</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.wildfly.swarm</groupId>
-                    <artifactId>management</artifactId>
-                </dependency>-->
 
         <!-- Camel -->
         <dependency>
