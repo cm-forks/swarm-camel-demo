@@ -126,7 +126,6 @@
                     <debug>${debug.port}</debug>
                     <mainClass>org.demo.MainApp</mainClass>
                     <properties>
-<!--                        <swarm.bind.address>127.0.0.1</swarm.bind.address>-->
                         <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
                     </properties>
                 </configuration>
