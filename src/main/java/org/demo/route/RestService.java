@@ -4,8 +4,16 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class RestService extends RouteBuilder {
     @Override public void configure() throws Exception {
-        from("undertow://http://localhost:9191/api/say")
+
+        restConfiguration()
+          .component("undertow")
+          .host("localhost");
+
+        rest("/api")
+           .get("/say/{name}").to("direct:say");
+
+        from("direct:say")
            .transform()
-              .constant("Hello from REST endpoint");
+              .simple("Hello from REST endpoint to ${header.name}");
     }
 }
