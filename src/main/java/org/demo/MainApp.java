@@ -1,23 +1,24 @@
 package org.demo;
 
 import org.demo.route.RestService;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.wildfly.swarm.Swarm;
 import org.wildfly.swarm.camel.core.CamelCoreFraction;
 import org.wildfly.swarm.jolokia.JolokiaFraction;
-import org.wildfly.swarm.management.ManagementFraction;
+import org.wildfly.swarm.undertow.WARArchive;
+
+import java.io.File;
 
 public class MainApp {
 
 	public static void main(String[] args) throws Exception {
 		Swarm swarm = new Swarm();
 
-		// Add fractions
-
-		// Camel
+		// Camel Fraction
 		swarm.fraction(new CamelCoreFraction()
 		        .addRouteBuilder(new RestService()));
 
-		// Jolokia - JMX HTTP Bridge
+		// Jolokia Fraction - JMX HTTP Bridge
 		swarm.fraction(new JolokiaFraction("/jmx"));
 
 		/*
@@ -36,7 +37,16 @@ public class MainApp {
 					});
 				}));*/
 
+		// Hawtio Web Console
+
+		//WARArchive hawtWar = ShrinkWrap.create(WARArchive.class);
+		//hawtWar.addAsWebResource(new URL("http://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.4.65/hawtio-default-1.4.65.war"),"/");
+
+		WARArchive hawtWar = ShrinkWrap.createFromZipFile(WARArchive.class,new File("/Users/chmoulli/Temp/test-swarm/demo/src/hawtio-default-1.4.65.war"));
+		hawtWar.setContextRoot("/hawtio");
+
 		swarm.start();
+		swarm.deploy(hawtWar);
 		swarm.deploy();
 	}
 }
