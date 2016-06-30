@@ -10,7 +10,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <docker.from>docker.io/fabric8/java-jboss-openjdk8-jdk:1.0.13</docker.from>
+<!--        <docker.from>docker.io/fabric8/java-jboss-openjdk8-jdk:1.0.13</docker.from>-->
+        <docker.from>docker.io/java:openjdk-8-jdk</docker.from>
         <docker.image>fabric8/${project.artifactId}:${project.version}</docker.image>
         <docker.port.container.http>8080</docker.port.container.http>
         <docker.port.container.jolokia>8778</docker.port.container.jolokia>
@@ -63,14 +64,14 @@
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>jolokia</artifactId>
         </dependency>
-<!--        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>logging</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>management</artifactId>
-        </dependency>-->
+        <!--        <dependency>
+                    <groupId>org.wildfly.swarm</groupId>
+                    <artifactId>logging</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.wildfly.swarm</groupId>
+                    <artifactId>management</artifactId>
+                </dependency>-->
 
         <!-- Camel -->
         <dependency>
@@ -125,73 +126,12 @@
                     <debug>${debug.port}</debug>
                     <mainClass>org.demo.MainApp</mainClass>
                     <properties>
-                        <swarm.bind.address>127.0.0.1</swarm.bind.address>
+<!--                        <swarm.bind.address>127.0.0.1</swarm.bind.address>-->
                         <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
                     </properties>
                 </configuration>
             </plugin>
 
-            <!--                    <plugin>
-                        <groupId>org.jolokia</groupId>
-                        <artifactId>docker-maven-plugin</artifactId>
-                        <version>${version.docker.maven.plugin}</version>
-                        <configuration>
-                            <images>
-                                <image>
-                                    <name>${project.build.finalName}</name>
-                                    <run>
-                                        <ports>
-                                            <port>8080:8080</port>
-                                        </ports>
-                                    </run>
-                                    <build>
-                                        <from>java:openjdk-8-jdk</from>
-                                        <ports>
-                                            <port>8080</port>
-                                        </ports>
-                                        <assembly>
-                                            <basedir>/</basedir>
-                                            <inline>
-                                                <files>
-                                                    <file>
-                                                        <source>
-                                                            ${project.build.directory}/${project.artifactId}-swarm.jar
-                                                        </source>
-                                                        <outputDirectory>/opt</outputDirectory>
-                                                    </file>
-                                                </files>
-                                            </inline>
-                                        </assembly>
-                                        <entryPoint>
-                                            <shell>java -jar /opt/${project.artifactId}-swarm.jar</shell>
-                                        </entryPoint>
-                                    </build>
-                                </image>
-                            </images>
-                        </configuration>
-&lt;!&ndash;                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>build</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>pre-integration-test</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>start</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>post-integration-test</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>&ndash;&gt;
-                    </plugin>-->
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -200,10 +140,18 @@
                     <images>
                         <image>
                             <name>${docker.image}</name>
+                            <run>
+                                <ports>
+                                    <port>8080:8080</port>
+                                </ports>
+                            </run>
                             <build>
                                 <from>${docker.from}</from>
+                                <ports>
+                                    <port>${docker.port.container.http}</port>
+                                </ports>
                                 <assembly>
-                                    <basedir>/app</basedir>
+                                    <basedir>/opt</basedir>
                                     <inline>
                                         <fileSets>
                                             <fileSet>
@@ -216,9 +164,9 @@
                                         </fileSets>
                                     </inline>
                                 </assembly>
-                                <env>
-                                    <JAVA_APP_JAR>${project.build.finalName}-swarm.jar</JAVA_APP_JAR>
-                                </env>
+                                <entryPoint>
+                                    <shell>java -jar /opt/${project.artifactId}-swarm.jar</shell>
+                                </entryPoint>
                             </build>
                         </image>
                     </images>
