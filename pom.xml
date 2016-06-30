@@ -110,6 +110,7 @@
           </execution>
         </executions>
         <configuration>
+          <useUberJar>true</useUberJar>
           <mainClass>org.demo.MainApp</mainClass>
         </configuration>
       </plugin>
