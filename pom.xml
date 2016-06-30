@@ -5,7 +5,7 @@
     <groupId>org.demo</groupId>
     <artifactId>demo</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -14,6 +14,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <version.wildfly-swarm>1.0.0.Final</version.wildfly-swarm>
+        <version.docker.maven.plugin>0.13.8</version.docker.maven.plugin>
     </properties>
 
     <dependencyManagement>
@@ -57,17 +58,21 @@
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>logging</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>jolokia</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>management</artifactId>
+        </dependency>
 
         <!-- Camel -->
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>camel-core</artifactId>
         </dependency>
-        <!--    <dependency>
-              <groupId>org.wildfly.swarm</groupId>
-              <artifactId>camel-cdi</artifactId>
-            </dependency>
-            -->
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>camel-undertow</artifactId>
@@ -115,6 +120,10 @@
                     <useUberJar>true</useUberJar>
                     <debug>${debug.port}</debug>
                     <mainClass>org.demo.MainApp</mainClass>
+                    <properties>
+                        <swarm.bind.address>127.0.0.1</swarm.bind.address>
+                        <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
+                    </properties>
                 </configuration>
             </plugin>
 
@@ -128,5 +137,73 @@
                 <debug.port>5555</debug.port>
             </properties>
         </profile>
+
+        <profile>
+            <id>docker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jolokia</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>${version.docker.maven.plugin}</version>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <name>${project.build.finalName}</name>
+                                    <run>
+                                        <ports>
+                                            <port>8080:8080</port>
+                                        </ports>
+                                    </run>
+                                    <build>
+                                        <from>java:openjdk-8-jdk</from>
+                                        <ports>
+                                            <port>8080</port>
+                                        </ports>
+                                        <assembly>
+                                            <basedir>/</basedir>
+                                            <inline>
+                                                <files>
+                                                    <file>
+                                                        <source>${project.build.directory}/${project.artifactId}-swarm.jar</source>
+                                                        <outputDirectory>/opt</outputDirectory>
+                                                    </file>
+                                                </files>
+                                            </inline>
+                                        </assembly>
+                                        <entryPoint>
+                                            <shell>java -jar /opt/${project.artifactId}-swarm.jar</shell>
+                                        </entryPoint>
+                                    </build>
+                                </image>
+                            </images>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>pre-integration-test</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>post-integration-test</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 </project>
