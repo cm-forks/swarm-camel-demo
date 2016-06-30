@@ -37,16 +37,16 @@ public class MainApp {
 					});
 				}));*/
 
-		// Hawtio Web Console
-
-		//WARArchive hawtWar = ShrinkWrap.create(WARArchive.class);
-		//hawtWar.addAsWebResource(new URL("http://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.4.65/hawtio-default-1.4.65.war"),"/");
+/*		// Hawtio Web Console
+        WARArchive hawtWar = ShrinkWrap.create(WARArchive.class);
+		hawtWar.addAsWebResource(new URL("http://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.4.65/hawtio-default-1.4.65.war"),"/");
 
 		WARArchive hawtWar = ShrinkWrap.createFromZipFile(WARArchive.class,new File("/Users/chmoulli/Temp/test-swarm/demo/src/hawtio-default-1.4.65.war"));
 		hawtWar.setContextRoot("/hawtio");
+*/
 
 		swarm.start();
-		swarm.deploy(hawtWar);
+		// swarm.deploy(hawtWar);
 		swarm.deploy();
 	}
 }

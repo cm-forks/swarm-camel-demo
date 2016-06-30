@@ -10,6 +10,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <docker.from>docker.io/fabric8/java-jboss-openjdk8-jdk:1.0.13</docker.from>
+        <docker.image>fabric8/${project.artifactId}:${project.version}</docker.image>
+        <docker.port.container.http>8080</docker.port.container.http>
+        <docker.port.container.jolokia>8778</docker.port.container.jolokia>
+
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
@@ -56,17 +61,16 @@
         </dependency>
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
+            <artifactId>jolokia</artifactId>
+        </dependency>
+<!--        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
             <artifactId>logging</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wildfly.swarm</groupId>
-            <artifactId>jolokia</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
             <artifactId>management</artifactId>
-        </dependency>
+        </dependency>-->
 
         <!-- Camel -->
         <dependency>
@@ -123,10 +127,10 @@
                     <properties>
                         <swarm.bind.address>127.0.0.1</swarm.bind.address>
                         <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                     </properties>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
@@ -142,7 +146,7 @@
             <id>docker</id>
             <build>
                 <plugins>
-                    <plugin>
+<!--                    <plugin>
                         <groupId>org.jolokia</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
                         <version>${version.docker.maven.plugin}</version>
@@ -165,7 +169,9 @@
                                             <inline>
                                                 <files>
                                                     <file>
-                                                        <source>${project.build.directory}/${project.artifactId}-swarm.jar</source>
+                                                        <source>
+                                                            ${project.build.directory}/${project.artifactId}-swarm.jar
+                                                        </source>
                                                         <outputDirectory>/opt</outputDirectory>
                                                     </file>
                                                 </files>
@@ -174,6 +180,109 @@
                                         <entryPoint>
                                             <shell>java -jar /opt/${project.artifactId}-swarm.jar</shell>
                                         </entryPoint>
+                                    </build>
+                                </image>
+                            </images>
+                        </configuration>
+&lt;!&ndash;                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>pre-integration-test</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>post-integration-test</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>&ndash;&gt;
+                    </plugin>-->
+                    <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>0.15.7</version>
+                    <configuration>
+                        <images>
+                            <image>
+                                <name>${docker.image}</name>
+                                <build>
+                                    <from>${docker.from}</from>
+                                    <assembly>
+                                        <basedir>/app</basedir>
+                                        <inline>
+                                            <fileSets>
+                                                <fileSet>
+                                                    <includes>
+                                                        <include>${project.build.finalName}-swarm.jar</include>
+                                                    </includes>
+                                                    <directory>${project.build.directory}</directory>
+                                                    <outputDirectory>/</outputDirectory>
+                                                </fileSet>
+                                            </fileSets>
+                                        </inline>
+                                    </assembly>
+                                    <env>
+                                        <JAVA_APP_JAR>${project.build.finalName}-swarm.jar</JAVA_APP_JAR>
+                                    </env>
+                                </build>
+                            </image>
+                        </images>
+                    </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+        <!--
+          Default sample commands:
+          mvn -Pf8-build         ... build Docker images and create OpenShift deployment configs
+          mvn -Pf8-deploy        ... f8-build + push to Docker registry + applying deployment config to OpenShift
+          mvn -Pf8-local-deploy ... deployment for a single node setup without pushing to a registry
+          For individual goal usage please consult the fabric8 documentation
+          -->
+        <profile>
+            <id>kubernetes</id>
+            <build>
+                <plugins>
+                    <!-- Fabric8 docker Plugin -->
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>0.15.7</version>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <name>${docker.image}</name>
+                                    <build>
+                                        <from>${docker.from}</from>
+                                        <assembly>
+                                            <basedir>/app</basedir>
+                                            <inline>
+                                                <fileSets>
+                                                    <fileSet>
+                                                        <includes>
+                                                            <include>${project.build.finalName}-swarm.jar</include>
+                                                        </includes>
+                                                        <directory>${project.build.directory}</directory>
+                                                        <outputDirectory>/</outputDirectory>
+                                                    </fileSet>
+                                                </fileSets>
+                                            </inline>
+                                        </assembly>
+                                        <env>
+                                            <JAVA_APP_JAR>${project.build.finalName}-swarm.jar</JAVA_APP_JAR>
+                                        </env>
                                     </build>
                                 </image>
                             </images>
@@ -201,9 +310,56 @@
                             </execution>
                         </executions>
                     </plugin>
+
+                    <!-- Fabric8 -->
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>fabric8-maven-plugin</artifactId>
+                        <version>2.2.136</version>
+                        <executions>
+                            <execution>
+                                <id>json</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>json</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>attach</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>attach</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
-
+        <profile>
+            <id>f8-build</id>
+            <build>
+                <defaultGoal>clean install docker:build fabric8:json</defaultGoal>
+            </build>
+        </profile>
+        <profile>
+            <id>f8-deploy</id>
+            <properties>
+                <fabric8.imagePullPolicySnapshot>Always</fabric8.imagePullPolicySnapshot>
+                <fabric8.recreate>true</fabric8.recreate>
+            </properties>
+            <build>
+                <defaultGoal>clean install docker:build docker:push fabric8:json fabric8:apply</defaultGoal>
+            </build>
+        </profile>
+        <profile>
+            <id>f8-local-deploy</id>
+            <properties>
+                <fabric8.recreate>true</fabric8.recreate>
+            </properties>
+            <build>
+                <defaultGoal>clean install docker:build fabric8:json fabric8:apply</defaultGoal>
+            </build>
+        </profile>
     </profiles>
 </project>
