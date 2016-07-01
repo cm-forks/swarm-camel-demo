@@ -2,11 +2,9 @@
 
 ## Introduction
 
-This is an example that uses the rest-dsl to define a rest services which provides three operations
+This is an example that uses the rest-dsl to define a rest services which provides one operation
 
-GET user/{id} - Find user by id
-PUT user - Updates or create a user
-GET user/findAll - Find all users
+GET api/say/{id} - Say Hello to the user name
 
 ## Build
 
