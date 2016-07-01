@@ -62,7 +62,7 @@ curl -d "{\"type\":\"read\",\"mbean\":\"java.lang:type=Memory\",\"attribute\":\"
 
 ## Running the example in fabric8
 
-It is assumed a Kubernetes platform is already running. If not, you can find details how to [get started](http://fabric8.io/guide/getStarted/index.html).
+It is assumed a Kubernetes platform is already running with or without OpenShift. If not, you can find details how to [get started](http://fabric8.io/guide/getStarted/index.html).
 
 The example can be built and deployed using a single goal:
 
