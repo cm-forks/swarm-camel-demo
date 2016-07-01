@@ -23,7 +23,7 @@ The rest service can be accessed from the following url
     curl http://localhost:8080/api/say/{name}
 <http://localhost:8080/api/say/{name}>
 
-For example to get say Hello for the name `charles`
+For example to say Hello for the name `charles`
 
     curl http://localhost:8080/api/say/charles
 <http://localhost:8080/api/say/charles>
@@ -37,7 +37,7 @@ To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
 ## Running the example in fabric8
 
-It is assumed a running Kubernetes platform is already running. If not you can find details how to get started.
+It is assumed a running Kubernetes platform is already running. If not you can find details how to [get started](http://fabric8.io/guide/getStarted/index.html).
 
 The example can be built and deployed using a single goal:
 
@@ -61,13 +61,11 @@ You can use any browser to perform a HTTP GET. This allows you to very easily te
 
 Notice: As it depends on your OpenShift setup, the hostname (route) might vary. Verify with oc get routes which hostname is valid for you.
 
-Use this URL to display the root of the REST service, which also allows to access the WADL of the service:
+Use this URL to display response message from the REST service:
 
-Use this URL to display the JSON representation for customer 123:
+    http://swarm-camel-rest-default.vagrant.f8/api/say/charles
 
-    http://cdi-camel-swagger-default.vagrant.f8/user/123
-
-where `vagrant.f8` is your Kubernetes domain.
+where `vagrant.f8` is your Kubernetes domain and `default`, the namespace of the project
 
 ## More details
 
