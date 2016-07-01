@@ -18,17 +18,17 @@ You will need to compile this example first:
 
 To run the example type
 
-    mvn exec:java
+    mvn wildfly-swarm:run
 
 The rest service can be accessed from the following url
 
-    curl http://localhost:8080/user
-<http://localhost:8080/user>
+    curl http://localhost:8080/api/say/{name}
+<http://localhost:8080/api/say/{name}>
 
-For example to get a user with id 123
+For example to get say Hello for the name `charles`
 
-    curl http://localhost:8080/user/123
-<http://localhost:8080/user/123>
+    curl http://localhost:8080/api/say/charles
+<http://localhost:8080/api/say/charles>
 
 The rest services provides Swagger API which can be accessed from the following url
 
