@@ -4,7 +4,7 @@
 
 This is an example that uses the rest-dsl to define a rest services which provides one operation
 
-GET api/say/{id} - Say Hello to the user name
+- GET api/say/{id}       - Say Hello to the user name
 
 ## Build
 
