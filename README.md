@@ -2,9 +2,21 @@
 
 ## Introduction
 
-This is an example that uses the rest-dsl to define a rest services which provides one operation
+This quickstart uses WildFly Swarm as Java lightweight container the Apache Camel Framework to expose a RESTfull endpoint registered within the Undertow server.
+This example uses the REST fluent DSL to define a rest service which provides one operation
 
 - GET api/say/{id}       - Say Hello to the user name
+
+To package the Camel module within the Swarm container, we use a [fraction]() which is customized with the RouteBuilder class of class
+
+```
+public static void main(String[] args) throws Exception {
+	Swarm swarm = new Swarm();
+
+	// Camel Fraction
+	swarm.fraction(new CamelCoreFraction()
+	        .addRouteBuilder(new RestService()));
+```
 
 ## Build
 
@@ -34,6 +46,18 @@ The rest services provides Swagger API which can be accessed from the following 
 <http://localhost:8080/swagger.json>
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
+
+## Jolokia & JMX
+
+We have registered the Jolokia fraction in order to access the JMX operations or attributes using the JSon HTTP Servlet Bridge offered by the
+[jolokia](https://jolokia.org/reference/html/protocol.html) project.
+
+Here are some curl request that we can use to grab JVM data
+
+```
+curl -X GET http://localhost:8080/jmx
+curl -d "{\"type\":\"read\",\"mbean\":\"java.lang:type=Memory\",\"attribute\":\"HeapMemoryUsage\",\"path\":\"used\"}" http://localhost:8080/jmx/ && echo ""
+```
 
 ## Running the example in fabric8
 
@@ -70,20 +94,3 @@ where `vagrant.f8` is your Kubernetes domain and `default`, the namespace of the
 ## More details
 
 You can find more details about running this quickstart on the website. This also includes instructions how to change the Docker image user and registry.
-Status API Training Shop Blog About
-
-
-## Call the Service
-
-```
-curl -X GET http://localhost:8080/api/say/charles
-```
-
-## Jolokia & JMX
-
-Some curl request that we can use to grab JVM data
-
-```
-curl -X GET http://localhost:8080/jmx
-curl -d "{\"type\":\"read\",\"mbean\":\"java.lang:type=Memory\",\"attribute\":\"HeapMemoryUsage\",\"path\":\"used\"}" http://localhost:8080/jmx/ && echo ""
-```
