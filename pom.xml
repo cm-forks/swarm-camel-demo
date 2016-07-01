@@ -127,6 +127,12 @@
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>camel-undertow</artifactId>
         </dependency>
+        <!-- The camel-other artefact contains all the non Camel Swarm Components including also camel-swagger-java.
+             There is nevertheless a classloading issue : https://github.com/wildfly-swarm/wildfly-swarm-camel/issues/52
+       <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>camel-other</artifactId>
+        </dependency>-->
 
         <!-- Camel -->
         <dependency>
@@ -281,4 +287,12 @@
             </build>
         </profile>
     </profiles>
+
+    <repositories>
+        <!-- Repo containing some Java EE jar files not published on Maven Central -->
+        <repository>
+            <id>springsource-libs-releases</id>
+            <url>http://repo.springsource.org/libs-release-remote</url>
+        </repository>
+    </repositories>
 </project>
