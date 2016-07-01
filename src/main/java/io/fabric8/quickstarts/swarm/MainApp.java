@@ -38,6 +38,7 @@ public class MainApp {
 
 		WARArchive deployment = ShrinkWrap.create(WARArchive.class);
 		deployment.staticContent();
+
 		swarm.deploy(deployment);
 	}
 }
