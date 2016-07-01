@@ -8,6 +8,7 @@ This example uses the REST fluent DSL to define a service which provides one ope
 - GET api/say/{id}       - Say Hello to the user name
 
 To package the Camel module within the Swarm container, we use a [fraction]() which is customized with the RouteBuilder class containing the Route.
+The MainApp class is bootstrapped by the Swarm container when we launch it.
 
 ```
 public static void main(String[] args) throws Exception {
