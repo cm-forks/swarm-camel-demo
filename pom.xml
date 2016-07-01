@@ -127,12 +127,13 @@
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>camel-undertow</artifactId>
         </dependency>
-        <!-- The camel-other artefact contains all the non Camel Swarm Components including also camel-swagger-java.
+        <!-- The camel-other artifact contains all the non Camel Swarm Components including also camel-swagger-java.
              There is nevertheless a classloading issue : https://github.com/wildfly-swarm/wildfly-swarm-camel/issues/52
        <dependency>
             <groupId>org.wildfly.swarm</groupId>
             <artifactId>camel-other</artifactId>
-        </dependency>-->
+        </dependency>
+        -->
 
         <!-- Camel -->
         <dependency>
