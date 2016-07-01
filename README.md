@@ -3,7 +3,7 @@
 ## Introduction
 
 This quickstart uses WildFly Swarm as Java lightweight container and the Apache Camel Integration Framework to expose a RESTfull endpoint registered within the Undertow server.
-This example uses the REST fluent DSL to define a rest service which provides one operation
+This example uses the REST fluent DSL to define a service which provides one operation
 
 - GET api/say/{id}       - Say Hello to the user name
 
